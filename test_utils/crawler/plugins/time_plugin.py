@@ -1,5 +1,5 @@
 from base import Plugin
-import time
+import time, csv
 
 class Time(Plugin):
     """
@@ -9,6 +9,7 @@ class Time(Plugin):
     def __init__(self):
         super(Time, self).__init__()
         self.timed_urls = self.data['timed_urls'] = {}
+        self.csv_writer = csv.writer(open('time.csv', 'w'))
 
     def pre_request(self, sender, **kwargs):
         url = kwargs['url']
@@ -21,6 +22,7 @@ class Time(Plugin):
         total_time = cur - old_time
         self.timed_urls[url] = total_time
         print "Time taken: %s" % self.timed_urls[url]
+        self.csv_writer.writerow([url,cur, old_time, total_time])
 
     def finish_run(self, sender, **kwargs):
         "Print the longest time it took for pages to load"
